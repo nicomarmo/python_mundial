@@ -271,3 +271,7 @@ agrupar.grid(row=4, column=3, columnspan=2, padx=(10, 10), pady=(10, 10), sticky
 
 
 root.mainloop()
+
+
+
+### aguante boca ###
