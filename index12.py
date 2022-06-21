@@ -300,7 +300,7 @@ closeButton = Button(
 closeButton.grid(row=14, column=4, columnspan=2, padx=(10, 10), pady=(10, 10), sticky=E)
 
 def handler(): 
-    if messagebox.askokcancel("Quit?", "Are you sure you want to quit?"):
+    if messagebox.askokcancel("Cerrar", "Estas seguro que queres cerrar?"):
         sql = "DROP TABLE equipo"
         cursor.execute(sql)
         miConexion.commit()
