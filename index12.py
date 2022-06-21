@@ -7,7 +7,6 @@ import sqlite3
 import mysql.connector
 from tkinter import messagebox
 import re
-from pymysql import NULL
 
 
 root = Tk()
@@ -92,25 +91,26 @@ def crear():
     global el_id
     miConexion.commit()
     data = (
-            str(el_id),
-            str(equipo_val.get()),
-            str(grupo_val.get()),
-            str(copas_val.get()),
-            str(conti_val.get()),
+        str(el_id),
+        str(equipo_val.get()),
+        str(grupo_val.get()),
+        int(copas_val.get()),
+        str(conti_val.get()),
     )
     sql = "INSERT INTO equipo(id, nombre, grupo, copas, continente) VALUES(?,?,?,?,?)"
     cursor.execute(sql, data)
     miConexion.commit()
     tree.insert(
-            "",
-            "end",
-            text=(el_id),
-            values=(equipo_val.get(), conti_val.get(), grupo_val.get(), copas_val.get()),
+        "",
+        "end",
+        text=(el_id),
+        values=(equipo_val.get(), conti_val.get(), grupo_val.get(), copas_val.get()),
     )
     equipos.append(equipo_val.get())
     el_id += 1
     print(equipos)
     messagebox.showinfo(message="El registro se creó con exito!", title="Crear")
+
 
 crear_b = Button(
     root, text="Crear", command=crear, relief=RAISED, fg="white", bg="#573CDE", width=10
@@ -201,14 +201,32 @@ copas1_e = Entry(root, textvariable=copas_val1)
 copas1_e.grid(row=14, column=3)
 
 #########################################################################
+equipo_val1.set("Equipo")
+conti_val1.set("Continente")
+grupo_val1.set("Grupo")
+copas_val1.set("0")
 
 
 def editar2():
     valor = tree.focus()
     item1 = tree.item(valor)
     el_id = item1["text"]
-    tree.item(valor, values=(equipo_val1.get(), conti_val1.get(), grupo_val1.get(), copas_val1.get()))
-    data = (str(equipo_val1.get()), str(grupo_val1.get()), str(copas_val1.get()), str(conti_val1.get()), el_id)
+    tree.item(
+        valor,
+        values=(
+            equipo_val1.get(),
+            conti_val1.get(),
+            grupo_val1.get(),
+            copas_val1.get(),
+        ),
+    )
+    data = (
+        str(equipo_val1.get()),
+        str(grupo_val1.get()),
+        str(copas_val1.get()),
+        str(conti_val1.get()),
+        el_id,
+    )
     sql = "UPDATE equipo SET nombre = ?, grupo = ?, copas = ?, continente = ? WHERE id = ?"
     cursor.execute(sql, data)
     miConexion.commit()
@@ -227,25 +245,26 @@ editar_b2 = Button(
 editar_b2.grid(row=4, column=2, columnspan=2, pady=(10, 10), sticky=E + N)
 
 
-
-
-
 def mostrar():
     ventana = Toplevel()
     ventana.title("Equipos")
 
     tree = ttk.Treeview(ventana)
-    tree["columns"] = ("col1", "col2")
+    tree["columns"] = ("col1", "col2", "col3", "col4")
     tree.column("#0", width=0, minwidth=0, anchor=W)
     tree.column("col1", width=70, minwidth=50, anchor=W)
     tree.column("col2", width=70, minwidth=50, anchor=W)
+    tree.column("col3", width=70, minwidth=50, anchor=W)
+    tree.column("col4", width=70, minwidth=50, anchor=W)
     tree.heading("#0", text="ID")
     tree.heading("col1", text="Equipo")
     tree.heading("col2", text="Grupo")
+    tree.heading("col3", text="Copas")
+    tree.heading("col4", text="Continente")
     tree.grid(row=0, column=0, columnspan=2)
 
     cursor = miConexion.cursor()
-    sql = "SELECT nombre, grupo FROM equipo ORDER BY grupo"
+    sql = "SELECT nombre,grupo,copas,continente FROM equipo ORDER BY grupo"
     cursor.execute(sql)
     resultado = cursor.fetchall()
     miConexion.commit()
@@ -253,9 +272,7 @@ def mostrar():
     print(resultado)
     rows = resultado
     for i in rows:
-        tree.insert('', 'end',text=el_id, values=i)
-
-    
+        tree.insert("", "end", text=el_id, values=i)
 
 
 agrupar = Button(
@@ -270,8 +287,30 @@ agrupar = Button(
 agrupar.grid(row=4, column=3, columnspan=2, padx=(10, 10), pady=(10, 10), sticky=E)
 
 
-root.mainloop()
+def cerrar():
+    sql = "DROP TABLE equipo"
+    cursor.execute(sql)
+    miConexion.commit()
+    print("ya se elimino")
+    root.destroy()
 
+closeButton = Button(
+    root, text="Cerrar", relief=RAISED, fg="white", bg="black", command=cerrar, width=10
+)
+closeButton.grid(row=14, column=4, columnspan=2, padx=(10, 10), pady=(10, 10), sticky=E)
+
+def handler(): 
+    if messagebox.askokcancel("Quit?", "Are you sure you want to quit?"):
+        sql = "DROP TABLE equipo"
+        cursor.execute(sql)
+        miConexion.commit()
+        print("ya se elimino")
+        root.quit()
+
+root.protocol("WM_DELETE_WINDOW", handler)
+
+
+root.mainloop()
 
 
 ### aguante boca ###
