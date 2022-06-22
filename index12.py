@@ -8,6 +8,7 @@ import mysql.connector
 from tkinter import messagebox
 import re
 
+#################################### Ventana Principal #############################################
 
 root = Tk()
 
@@ -26,9 +27,8 @@ grupo_val = StringVar()
 copas_val = IntVar()
 el_id = 0
 equipos = []
-grupos = ["A", "B", "C", "D", "E", "F", "G", "H"]
 
-###################   Imagen  ##########################
+###################   Imagen Qatar_2022  ##############################
 
 img = PhotoImage(file="qatar_2.png")
 img = img.subsample(1, 1)
@@ -36,7 +36,7 @@ lbl_img = Label(root, image=img)
 lbl_img.grid(column=0, row=0, columnspan=10, pady=(5, 5), padx=(1, 1))
 root.configure(background="#FFFFFF")
 
-################# Tittulo para Entrys ###################
+########################## Tittulo para Entrys ########################
 
 l1 = Label(
     root,
@@ -47,7 +47,7 @@ l1 = Label(
 )
 l1.grid(row=1, column=0, columnspan=6, padx=1, pady=1, sticky=W + E)
 
-##################### Entrys ############################
+############################## Entrys #################################
 
 team = Label(root, text="Equipo")
 team.grid(row=2, column=0)
@@ -69,9 +69,9 @@ copas.grid(row=3, column=3)
 copas_e = Entry(root, textvariable=copas_val)
 copas_e.grid(row=3, column=4, padx=(5, 5), sticky=W)
 
-############################## Base de Datos ###################################################
+########################################### Base de Datos ###################################################
 
-
+###################################### Funcion Crear ##########################################
 def conexion():
     con = sqlite3.connect("databasetp_1.db")
     return con
@@ -108,7 +108,6 @@ def crear():
     )
     equipos.append(equipo_val.get())
     el_id += 1
-    print(equipos)
     messagebox.showinfo(message="El registro se creó con exito!", title="Crear")
 
 
@@ -116,6 +115,8 @@ crear_b = Button(
     root, text="Crear", command=crear, relief=RAISED, fg="white", bg="#573CDE", width=10
 )
 crear_b.grid(row=4, column=0, padx=(10, 10), pady=(10, 10))
+
+################################ Función Eliminar #######################################
 
 
 def eliminar():
@@ -142,23 +143,6 @@ eliminar_b = Button(
 )
 eliminar_b.grid(row=4, column=1, padx=(10, 10), pady=(10, 10), sticky=E)
 
-
-###################### Treeview ##########################
-
-tree = ttk.Treeview(root)
-tree["columns"] = ("col1", "col2", "col3", "col4")
-tree.column("#0", width=50, minwidth=50, anchor=W)
-tree.column("col1", width=100, minwidth=50)
-tree.column("col2", width=100, minwidth=50, anchor=W)
-tree.column("col3", width=100, minwidth=50, anchor=W)
-tree.column("col4", width=100, minwidth=50, anchor=W)
-tree.heading("#0", text="ID")
-tree.heading("col1", text="Equipo")
-tree.heading("col2", text="Continente")
-tree.heading("col3", text="Grupo")
-tree.heading("col4", text="Copas")
-tree.grid(row=11, column=0, columnspan=6)
-
 ##################### Titulo de Entrys para Editar ############################
 
 l1 = Label(
@@ -170,7 +154,7 @@ l1 = Label(
 )
 l1.grid(row=12, column=0, columnspan=6, padx=1, pady=1, sticky=W + E)
 
-##################### Entrys  para Editar ############################
+################################ Entrys  para Editar #####################################
 
 equipo_val1 = StringVar()
 conti_val1 = StringVar()
@@ -200,7 +184,8 @@ copas1.grid(row=14, column=2)
 copas1_e = Entry(root, textvariable=copas_val1)
 copas1_e.grid(row=14, column=3)
 
-#########################################################################
+################################# Función Editar ########################################
+
 equipo_val1.set("Equipo")
 conti_val1.set("Continente")
 grupo_val1.set("Grupo")
@@ -245,17 +230,20 @@ editar_b2 = Button(
 editar_b2.grid(row=4, column=2, columnspan=2, pady=(10, 10), sticky=E + N)
 
 
+############################################ Función Mostrar #########################################
+
+
 def mostrar():
     ventana = Toplevel()
     ventana.title("Equipos")
 
     tree = ttk.Treeview(ventana)
     tree["columns"] = ("col1", "col2", "col3", "col4")
-    tree.column("#0", width=0, minwidth=0, anchor=W)
-    tree.column("col1", width=70, minwidth=50, anchor=W)
-    tree.column("col2", width=70, minwidth=50, anchor=W)
-    tree.column("col3", width=70, minwidth=50, anchor=W)
-    tree.column("col4", width=70, minwidth=50, anchor=W)
+    tree.column("#0", width=0, minwidth=0, anchor=CENTER)
+    tree.column("col1", width=70, minwidth=50, anchor=CENTER)
+    tree.column("col2", width=70, minwidth=50, anchor=CENTER)
+    tree.column("col3", width=70, minwidth=50, anchor=CENTER)
+    tree.column("col4", width=70, minwidth=50, anchor=CENTER)
     tree.heading("#0", text="ID")
     tree.heading("col1", text="Equipo")
     tree.heading("col2", text="Grupo")
@@ -286,31 +274,51 @@ agrupar = Button(
 )
 agrupar.grid(row=4, column=3, columnspan=2, padx=(10, 10), pady=(10, 10), sticky=E)
 
+################################ Función Cerrar ##############################################
+
 
 def cerrar():
     sql = "DROP TABLE equipo"
     cursor.execute(sql)
     miConexion.commit()
-    print("ya se elimino")
+    messagebox.askokcancel("Cerrar", "Estas seguro que queres cerrar?")
+    print("App cerrada y db reiniciada")
     root.destroy()
+
 
 closeButton = Button(
     root, text="Cerrar", relief=RAISED, fg="white", bg="black", command=cerrar, width=10
 )
 closeButton.grid(row=14, column=4, columnspan=2, padx=(10, 10), pady=(10, 10), sticky=E)
 
-def handler(): 
+
+def handler():
     if messagebox.askokcancel("Cerrar", "Estas seguro que queres cerrar?"):
         sql = "DROP TABLE equipo"
         cursor.execute(sql)
         miConexion.commit()
-        print("ya se elimino")
+        print("App cerrada y db reiniciada")
         root.quit()
+
 
 root.protocol("WM_DELETE_WINDOW", handler)
 
+#################################### Treeview ###################################################
+
+tree = ttk.Treeview(root)
+tree["columns"] = ("col1", "col2", "col3", "col4")
+tree.column("#0", width=50, minwidth=50, anchor=W)
+tree.column("col1", width=100, minwidth=50)
+tree.column("col2", width=100, minwidth=50, anchor=W)
+tree.column("col3", width=100, minwidth=50, anchor=W)
+tree.column("col4", width=100, minwidth=50, anchor=W)
+tree.heading("#0", text="ID")
+tree.heading("col1", text="Equipo")
+tree.heading("col2", text="Continente")
+tree.heading("col3", text="Grupo")
+tree.heading("col4", text="Copas")
+tree.grid(row=11, column=0, columnspan=6)
+
+#################################################################################################
 
 root.mainloop()
-
-
-### aguante boca ###
